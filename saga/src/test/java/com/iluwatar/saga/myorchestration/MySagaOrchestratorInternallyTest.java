@@ -20,12 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package com.iluwatar.saga.myorchestration;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import com.iluwatar.saga.myorchestration.domain.InvalidConfigurationSagaOrchestratorException;
+import com.iluwatar.saga.myorchestration.application.*;
+import com.iluwatar.saga.myorchestration.exception.InvalidConfigurationSagaOrchestratorException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;

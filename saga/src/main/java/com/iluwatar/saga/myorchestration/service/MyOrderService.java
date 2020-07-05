@@ -21,9 +21,9 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.application;
+package com.iluwatar.saga.myorchestration.service;
 
-import com.iluwatar.saga.myorchestration.MyService;
+import com.iluwatar.saga.myorchestration.application.MyService;
 
 /**
  * @author guilherme
@@ -31,6 +31,10 @@ import com.iluwatar.saga.myorchestration.MyService;
  * : $
  * @since 03/07/2020 15:56
  */
-public class OrderService extends MyService<Integer> {
+public class MyOrderService extends MyService<String> {
 
+    @Override
+    public String getName() {
+        return "init an order";
+    }
 }

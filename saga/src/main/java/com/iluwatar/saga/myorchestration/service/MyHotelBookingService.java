@@ -21,39 +21,33 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
+package com.iluwatar.saga.myorchestration.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import com.iluwatar.saga.myorchestration.application.MyChapterResult;
+import com.iluwatar.saga.myorchestration.application.MyService;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 30/06/2020 20:44
+ * @since 03/07/2020 15:56
  */
-public class MyServiceDiscovery<K> {
+public class MyHotelBookingService extends MyService<String> {
 
-	private final Map<String, MyOrchestrationChapter<K>> orchestrationsMap;
+    @Override
+    public String getName() {
+        return "booking a Hotel";
+    }
 
-	private MyServiceDiscovery () {
-		this.orchestrationsMap = new HashMap<>();
-	}
+    @Override
+    public MyChapterResult<String> rollback(String value) {
 
-	public Optional<MyOrchestrationChapter<K>> find(final String chapterName) {
-		Objects.requireNonNull(chapterName, "chapterName cannot be null");
-		return Optional.ofNullable(orchestrationsMap.get(chapterName));
-	}
+        if (value.equals("flux_must_crash_order")) {
 
-	public MyServiceDiscovery<K> discover(final MyOrchestrationChapter<K> orchestrationChapter) {
-		Objects.requireNonNull(orchestrationChapter, "orchestrationChapter cannot be null");
-		orchestrationsMap.put(orchestrationChapter.getName(), orchestrationChapter);
-		return this;
-	}
+            LOGGER.warn("The flux '{}' entered. The chapter '{}' crashed. Failed to process value {}", value, getName(), value);
+            return MyChapterResult.failure(value);
+        }
 
-	public static <K> MyServiceDiscovery<K> create() {
-		return new MyServiceDiscovery<>();
-	}
+        return super.rollback(value);
+    }
 }

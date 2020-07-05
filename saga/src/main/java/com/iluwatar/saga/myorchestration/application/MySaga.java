@@ -23,14 +23,65 @@
 
 package com.iluwatar.saga.myorchestration.application;
 
-import com.iluwatar.saga.myorchestration.MyService;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 03/07/2020 15:57
+ * @since 30/06/2020 20:34
  */
-public class WithdrawMoneyService  extends MyService<Integer> {
+public class MySaga implements Iterable<MySaga.MyChapter> {
 
+	private final List<MyChapter> chapters;
+
+	private MySaga () {
+		this.chapters = new ArrayList<>();
+	}
+
+	public static MySaga create () {
+		return new MySaga();
+	}
+
+	public MySaga chapter (final String chapterName) {
+		chapters.add(new MyChapter(chapterName));
+		return this;
+	}
+
+	public MyChapter getChapter (final int index) {
+		return chapters.get(index);
+	}
+
+	public boolean isIndexInRange (final int index) {
+		return index >= 0 && (index < chapters.size());
+	}
+
+	public int totalChapters () {
+		return chapters.size();
+	}
+
+	@Override
+	public Iterator<MyChapter> iterator () {
+		return new ArrayList<>(chapters).iterator();
+	}
+
+	public enum Result {
+		FINISHED, ROLLBACK, CRASHED
+	}
+
+	public class MyChapter {
+
+		private final String name;
+
+		public MyChapter (final String name) {
+			this.name = Objects.requireNonNull(name, "name cannot be null!");
+		}
+
+		public String getName () {
+			return name;
+		}
+	}
 }

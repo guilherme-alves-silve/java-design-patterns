@@ -21,19 +21,41 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
+package com.iluwatar.saga.myorchestration.application;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 30/06/2020 20:15
+ * @since 30/06/2020 18:16
  */
-public interface MyOrchestrationChapter<K> {
+public class MyChapterResult<K> {
 
-	String getName();
+	private final K value;
+	private final State state;
 
-	MyChapterResult<K> process(K value);
+	private MyChapterResult (final K value, final State state) {
+		this.value = value;
+		this.state = state;
+	}
 
-	MyChapterResult<K> rollback(K value);
+	public K getValue () {
+		return value;
+	}
+
+	public boolean isSuccess() {
+		return State.SUCCESS == state;
+	}
+
+	public static <K> MyChapterResult<K> success(final K value) {
+		return new MyChapterResult<>(value, State.SUCCESS);
+	}
+
+	public static <K> MyChapterResult<K> failure(final K value) {
+		return new MyChapterResult<>(value, State.FAILURE);
+	}
+
+	public enum State {
+		SUCCESS, FAILURE
+	}
 }

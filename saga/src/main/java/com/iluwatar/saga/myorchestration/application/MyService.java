@@ -21,67 +21,39 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
+package com.iluwatar.saga.myorchestration.application;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 30/06/2020 20:34
+ * @since 30/06/2020 20:14
  */
-public class MySaga implements Iterable<MySaga.MyChapter> {
+public abstract class MyService<K> implements MyOrchestrationChapter<K> {
 
-	private final List<MyChapter> chapters;
+	protected static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
 
-	private MySaga () {
-		this.chapters = new ArrayList<>();
-	}
-
-	public static MySaga create () {
-		return new MySaga();
-	}
-
-	public MySaga chapter (final String chapterName) {
-		chapters.add(new MyChapter(chapterName));
-		return this;
-	}
-
-	public MyChapter getChapter (final int index) {
-		return chapters.get(index);
-	}
-
-	public boolean isIndexInRange (final int index) {
-		return index >= 0 && (index < chapters.size());
-	}
-
-	public int totalChapters () {
-		return chapters.size();
+	@Override
+	public String getName () {
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
-	public Iterator<MyChapter> iterator () {
-		return new ArrayList<>(chapters).iterator();
+	public MyChapterResult<K> process (final K value) {
+
+		LOGGER.info("The process of chapter '{}' started. Processed value {} successfully", getName(), value);
+
+		return MyChapterResult.success(value);
 	}
 
-	public enum Result {
-		FINISHED, ROLLBACK, CRASHED
-	}
+	@Override
+	public MyChapterResult<K> rollback (final K value) {
 
-	public class MyChapter {
+		LOGGER.warn("The rollback of chapter '{}' started. Rollbacked value {} successfully", getName(), value);
 
-		private final String name;
-
-		public MyChapter (final String name) {
-			this.name = Objects.requireNonNull(name, "name cannot be null!");
-		}
-
-		public String getName () {
-			return name;
-		}
+		return MyChapterResult.success(value);
 	}
 }

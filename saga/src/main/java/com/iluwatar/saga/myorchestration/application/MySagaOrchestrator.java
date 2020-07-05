@@ -21,11 +21,11 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
+package com.iluwatar.saga.myorchestration.application;
 
-import static com.iluwatar.saga.myorchestration.MySaga.*;
+import static com.iluwatar.saga.myorchestration.application.MySaga.*;
 
-import com.iluwatar.saga.myorchestration.domain.InvalidConfigurationSagaOrchestratorException;
+import com.iluwatar.saga.myorchestration.exception.InvalidConfigurationSagaOrchestratorException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

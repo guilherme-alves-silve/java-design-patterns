@@ -21,39 +21,19 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.iluwatar.saga.myorchestration.application;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 30/06/2020 20:14
+ * @since 30/06/2020 20:15
  */
-public abstract class MyService<K> implements MyOrchestrationChapter<K> {
+public interface MyOrchestrationChapter<K> {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
+	String getName();
 
-	@Override
-	public String getName () {
-		return this.getClass().getSimpleName();
-	}
+	MyChapterResult<K> process(K value);
 
-	@Override
-	public MyChapterResult<K> process (final K value) {
-
-		LOGGER.info("The process of chapter '{}' started. Processed value {} successfully", getName(), value);
-
-		return MyChapterResult.success(value);
-	}
-
-	@Override
-	public MyChapterResult<K> rollback (final K value) {
-
-		LOGGER.info("The rollback of chapter '{}' started. Rollbacked value {} successfully", getName(), value);
-
-		return MyChapterResult.success(value);
-	}
+	MyChapterResult<K> rollback(K value);
 }

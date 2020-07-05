@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.domain;
+package com.iluwatar.saga.myorchestration.exception;
 
 /**
  * @author guilherme

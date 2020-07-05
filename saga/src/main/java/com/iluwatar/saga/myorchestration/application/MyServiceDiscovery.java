@@ -23,14 +23,37 @@
 
 package com.iluwatar.saga.myorchestration.application;
 
-import com.iluwatar.saga.myorchestration.MyService;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 03/07/2020 15:56
+ * @since 30/06/2020 20:44
  */
-public class FlyBookingService extends MyService<Integer> {
+public class MyServiceDiscovery<K> {
 
+	private final Map<String, MyOrchestrationChapter<K>> orchestrationsMap;
+
+	private MyServiceDiscovery () {
+		this.orchestrationsMap = new HashMap<>();
+	}
+
+	public Optional<MyOrchestrationChapter<K>> find(final String chapterName) {
+		Objects.requireNonNull(chapterName, "chapterName cannot be null");
+		return Optional.ofNullable(orchestrationsMap.get(chapterName));
+	}
+
+	public MyServiceDiscovery<K> discover(final MyOrchestrationChapter<K> orchestrationChapter) {
+		Objects.requireNonNull(orchestrationChapter, "orchestrationChapter cannot be null");
+		orchestrationsMap.put(orchestrationChapter.getName(), orchestrationChapter);
+		return this;
+	}
+
+	public static <K> MyServiceDiscovery<K> create() {
+		return new MyServiceDiscovery<>();
+	}
 }

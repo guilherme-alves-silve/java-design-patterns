@@ -21,41 +21,20 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
+package com.iluwatar.saga.myorchestration.service;
+
+import com.iluwatar.saga.myorchestration.application.MyService;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 30/06/2020 18:16
+ * @since 03/07/2020 15:56
  */
-public class MyChapterResult<K> {
+public class MyFlyBookingService extends MyService<String> {
 
-	private final K value;
-	private final State state;
-
-	private MyChapterResult (final K value, final State state) {
-		this.value = value;
-		this.state = state;
-	}
-
-	public K getValue () {
-		return value;
-	}
-
-	public boolean isSuccess() {
-		return State.SUCCESS == state;
-	}
-
-	public static <K> MyChapterResult<K> success(final K value) {
-		return new MyChapterResult<>(value, State.SUCCESS);
-	}
-
-	public static <K> MyChapterResult<K> failure(final K value) {
-		return new MyChapterResult<>(value, State.FAILURE);
-	}
-
-	public enum State {
-		SUCCESS, FAILURE
-	}
+    @Override
+    public String getName() {
+        return "booking a Fly";
+    }
 }

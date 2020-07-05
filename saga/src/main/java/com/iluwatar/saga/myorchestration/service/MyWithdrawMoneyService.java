@@ -21,16 +21,32 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.application;
+package com.iluwatar.saga.myorchestration.service;
 
-import com.iluwatar.saga.myorchestration.MyService;
+import com.iluwatar.saga.myorchestration.application.MyChapterResult;
+import com.iluwatar.saga.myorchestration.application.MyService;
 
 /**
  * @author guilherme
  * @version : $<br/>
  * : $
- * @since 03/07/2020 15:56
+ * @since 03/07/2020 15:57
  */
-public class HotelBookingService extends MyService<Integer> {
+public class MyWithdrawMoneyService extends MyService<String> {
 
+    @Override
+    public String getName() {
+        return "withdrawing Money";
+    }
+
+    @Override
+    public MyChapterResult<String> process(String value) {
+
+        if (value.equals("flux_must_rollback_order") || value.equals("flux_must_crash_order")) {
+            LOGGER.warn("The flux '{}' entered. The chapter '{}' failed to process value '{}'", value, getName(), value);
+            return MyChapterResult.failure(value);
+        }
+
+        return super.process(value);
+    }
 }
