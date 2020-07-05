@@ -21,27 +21,39 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.orchestration;
+package com.iluwatar.saga.myorchestration;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Class representing a service to withdraw a money.
+ * @author guilherme
+ * @version : $<br/>
+ * : $
+ * @since 30/06/2020 20:44
  */
-public class WithdrawMoneyService extends Service<String> {
-  @Override
-  public String getName() {
-    return "withdrawing Money";
-  }
+public class MyServiceDiscovery<K> {
 
-  @Override
-  public ChapterResult<String> process(String value) {
+	private final Map<String, MyOrchestrationChapter<K>> orchestrationsMap;
 
-    if (value.equals("bad_order") || value.equals("crashed_order")) {
-      LOGGER.info("The chapter '{}' has been started. But the exception has been raised."
-              + "The rollback of value {} is about to start",
-          getName(), value);
-      return ChapterResult.failure(value);
-    }
+	private MyServiceDiscovery () {
+		this.orchestrationsMap = new HashMap<>();
+	}
 
-    return super.process(value);
-  }
+	public Optional<MyOrchestrationChapter<K>> find(final String chapterName) {
+		Objects.requireNonNull(chapterName, "chapterName cannot be null");
+		return Optional.ofNullable(orchestrationsMap.get(chapterName));
+	}
+
+	public MyServiceDiscovery<K> discover(final MyOrchestrationChapter<K> orchestrationChapter) {
+		Objects.requireNonNull(orchestrationChapter, "orchestrationChapter cannot be null");
+		orchestrationsMap.put(orchestrationChapter.getName(), orchestrationChapter);
+		return this;
+	}
+
+	public static <K> MyServiceDiscovery<K> create() {
+		return new MyServiceDiscovery<>();
+	}
 }

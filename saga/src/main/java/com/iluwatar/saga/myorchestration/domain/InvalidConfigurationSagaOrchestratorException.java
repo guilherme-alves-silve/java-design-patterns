@@ -21,27 +21,14 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.orchestration;
+package com.iluwatar.saga.myorchestration.domain;
 
 /**
- * Class representing a service to withdraw a money.
+ * @author guilherme
+ * @version : $<br/>
+ * : $
+ * @since 02/07/2020 18:11
  */
-public class WithdrawMoneyService extends Service<String> {
-  @Override
-  public String getName() {
-    return "withdrawing Money";
-  }
+public class InvalidConfigurationSagaOrchestratorException extends RuntimeException {
 
-  @Override
-  public ChapterResult<String> process(String value) {
-
-    if (value.equals("bad_order") || value.equals("crashed_order")) {
-      LOGGER.info("The chapter '{}' has been started. But the exception has been raised."
-              + "The rollback of value {} is about to start",
-          getName(), value);
-      return ChapterResult.failure(value);
-    }
-
-    return super.process(value);
-  }
 }

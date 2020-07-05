@@ -21,27 +21,17 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.orchestration;
+package com.iluwatar.saga.myorchestration;
 
 /**
- * Class representing a service to withdraw a money.
+ * @author guilherme
+ * @version : $<br/>
+ * : $
+ * @since 30/06/2020 20:25
  */
-public class WithdrawMoneyService extends Service<String> {
-  @Override
-  public String getName() {
-    return "withdrawing Money";
-  }
+public class MySagaApplication {
 
-  @Override
-  public ChapterResult<String> process(String value) {
-
-    if (value.equals("bad_order") || value.equals("crashed_order")) {
-      LOGGER.info("The chapter '{}' has been started. But the exception has been raised."
-              + "The rollback of value {} is about to start",
-          getName(), value);
-      return ChapterResult.failure(value);
-    }
-
-    return super.process(value);
-  }
+	public static void main (String[] args) {
+		
+	}
 }

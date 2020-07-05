@@ -21,27 +21,41 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.orchestration;
+package com.iluwatar.saga.myorchestration;
 
 /**
- * Class representing a service to withdraw a money.
+ * @author guilherme
+ * @version : $<br/>
+ * : $
+ * @since 30/06/2020 18:16
  */
-public class WithdrawMoneyService extends Service<String> {
-  @Override
-  public String getName() {
-    return "withdrawing Money";
-  }
+public class MyChapterResult<K> {
 
-  @Override
-  public ChapterResult<String> process(String value) {
+	private final K value;
+	private final State state;
 
-    if (value.equals("bad_order") || value.equals("crashed_order")) {
-      LOGGER.info("The chapter '{}' has been started. But the exception has been raised."
-              + "The rollback of value {} is about to start",
-          getName(), value);
-      return ChapterResult.failure(value);
-    }
+	private MyChapterResult (final K value, final State state) {
+		this.value = value;
+		this.state = state;
+	}
 
-    return super.process(value);
-  }
+	public K getValue () {
+		return value;
+	}
+
+	public boolean isSuccess() {
+		return State.SUCCESS == state;
+	}
+
+	public static <K> MyChapterResult<K> success(final K value) {
+		return new MyChapterResult<>(value, State.SUCCESS);
+	}
+
+	public static <K> MyChapterResult<K> failure(final K value) {
+		return new MyChapterResult<>(value, State.FAILURE);
+	}
+
+	public enum State {
+		SUCCESS, FAILURE
+	}
 }

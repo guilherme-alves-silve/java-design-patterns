@@ -21,27 +21,39 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.orchestration;
+package com.iluwatar.saga.myorchestration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Class representing a service to withdraw a money.
+ * @author guilherme
+ * @version : $<br/>
+ * : $
+ * @since 30/06/2020 20:14
  */
-public class WithdrawMoneyService extends Service<String> {
-  @Override
-  public String getName() {
-    return "withdrawing Money";
-  }
+public abstract class MyService<K> implements MyOrchestrationChapter<K> {
 
-  @Override
-  public ChapterResult<String> process(String value) {
+	protected static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
 
-    if (value.equals("bad_order") || value.equals("crashed_order")) {
-      LOGGER.info("The chapter '{}' has been started. But the exception has been raised."
-              + "The rollback of value {} is about to start",
-          getName(), value);
-      return ChapterResult.failure(value);
-    }
+	@Override
+	public String getName () {
+		return this.getClass().getSimpleName();
+	}
 
-    return super.process(value);
-  }
+	@Override
+	public MyChapterResult<K> process (final K value) {
+
+		LOGGER.info("The process of chapter '{}' started. Processed value {} successfully", getName(), value);
+
+		return MyChapterResult.success(value);
+	}
+
+	@Override
+	public MyChapterResult<K> rollback (final K value) {
+
+		LOGGER.info("The rollback of chapter '{}' started. Rollbacked value {} successfully", getName(), value);
+
+		return MyChapterResult.success(value);
+	}
 }
