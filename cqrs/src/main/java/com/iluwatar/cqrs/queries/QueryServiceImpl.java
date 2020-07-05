@@ -44,7 +44,7 @@ public class QueryServiceImpl implements IQueryService {
   public Author getAuthorByUsername(String username) {
     Author authorDTo;
     try (var session = sessionFactory.openSession()) {
-      var sqlQuery = session.createSQLQuery("SELECT a.username as \"username\","
+      var sqlQuery = session.createNativeQuery("SELECT a.username as \"username\","
           + " a.name as \"name\", a.email as \"email\""
           + "FROM Author a where a.username=:username");
       sqlQuery.setParameter(AppConstants.USER_NAME, username);
@@ -58,7 +58,7 @@ public class QueryServiceImpl implements IQueryService {
   public Book getBook(String title) {
     Book bookDTo;
     try (var session = sessionFactory.openSession()) {
-      var sqlQuery = session.createSQLQuery("SELECT b.title as \"title\","
+      var sqlQuery = session.createNativeQuery("SELECT b.title as \"title\","
           + " b.price as \"price\"" + " FROM Book b where b.title=:title");
       sqlQuery.setParameter("title", title);
       bookDTo =
@@ -71,7 +71,7 @@ public class QueryServiceImpl implements IQueryService {
   public List<Book> getAuthorBooks(String username) {
     List<Book> bookDTos;
     try (var session = sessionFactory.openSession()) {
-      var sqlQuery = session.createSQLQuery("SELECT b.title as \"title\", b.price as \"price\""
+      var sqlQuery = session.createNativeQuery("SELECT b.title as \"title\", b.price as \"price\""
           + " FROM Author a , Book b where b.author_id = a.id and a.username=:username");
       sqlQuery.setParameter(AppConstants.USER_NAME, username);
       bookDTos = sqlQuery.setResultTransformer(Transformers.aliasToBean(Book.class)).list();
@@ -83,7 +83,7 @@ public class QueryServiceImpl implements IQueryService {
   public BigInteger getAuthorBooksCount(String username) {
     BigInteger bookcount;
     try (var session = sessionFactory.openSession()) {
-      var sqlQuery = session.createSQLQuery(
+      var sqlQuery = session.createNativeQuery(
           "SELECT count(b.title)" + " FROM  Book b, Author a"
               + " where b.author_id = a.id and a.username=:username");
       sqlQuery.setParameter(AppConstants.USER_NAME, username);
@@ -96,7 +96,7 @@ public class QueryServiceImpl implements IQueryService {
   public BigInteger getAuthorsCount() {
     BigInteger authorcount;
     try (var session = sessionFactory.openSession()) {
-      var sqlQuery = session.createSQLQuery("SELECT count(id) from Author");
+      var sqlQuery = session.createNativeQuery("SELECT count(id) from Author");
       authorcount = (BigInteger) sqlQuery.uniqueResult();
     }
     return authorcount;
