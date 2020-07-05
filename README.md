@@ -57,3 +57,19 @@ you and answer your questions in the [Gitter chatroom](https://gitter.im/iluwata
 # License
 
 This project is licensed under the terms of the MIT license.
+
+# ** Study list **
+
+## * Cloud distributed *
+
+| Pattern                | Done |
+|------------------------|------|
+|Saga 					 |  [ ] |
+|CQRS 					 |  [ ] |
+|API Gateway 			 |  [ ] |
+|Aggregator Microservices|  [ ] |
+|Commander 				 |  [ ] |
+|Leader Election 		 |  [ ] |
+|Poison Pill 			 |  [ ] |
+|Serverless 			 |  [ ] |
+|Sharding 				 |  [ ] |
