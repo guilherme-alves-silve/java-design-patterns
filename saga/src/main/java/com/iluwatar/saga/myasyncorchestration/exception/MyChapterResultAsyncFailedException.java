@@ -1,10 +1,14 @@
 package com.iluwatar.saga.myasyncorchestration.exception;
 
-public class MyChapterResultAsyncFailedExcption<K> {
+import com.iluwatar.saga.myasyncorchestration.application.MyChapterResultAsync;
 
-    private final K value;
+public class MyChapterResultAsyncFailedException extends RuntimeException {
 
-    public MyChapterResultAsyncFailedExcption(K value) {
+    private final Object value;
+    private final MyChapterResultAsync.State state;
+
+    public MyChapterResultAsyncFailedException(final Object value, final MyChapterResultAsync.State state) {
         this.value = value;
+        this.state = state;
     }
 }

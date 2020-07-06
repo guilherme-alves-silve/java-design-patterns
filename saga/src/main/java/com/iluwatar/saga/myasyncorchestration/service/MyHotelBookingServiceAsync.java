@@ -21,10 +21,12 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.service;
+package com.iluwatar.saga.myasyncorchestration.service;
 
-import com.iluwatar.saga.myorchestration.application.MyChapterResult;
-import com.iluwatar.saga.myorchestration.application.MyService;
+import com.iluwatar.saga.myasyncorchestration.application.MyChapterResultAsync;
+import com.iluwatar.saga.myasyncorchestration.application.MyServiceAsync;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author guilherme
@@ -32,7 +34,7 @@ import com.iluwatar.saga.myorchestration.application.MyService;
  * : $
  * @since 03/07/2020 15:56
  */
-public class MyHotelBookingService extends MyService<String> {
+public class MyHotelBookingServiceAsync extends MyServiceAsync<String> {
 
     @Override
     public String getName() {
@@ -40,12 +42,12 @@ public class MyHotelBookingService extends MyService<String> {
     }
 
     @Override
-    public MyChapterResult<String> rollback(String value) {
+    public CompletableFuture<MyChapterResultAsync<String>> rollback(String value) {
 
         if (value.equals("flux_must_crash_order")) {
 
             LOGGER.warn("The flux '{}' entered. The chapter '{}' crashed. Failed to process value {}", value, getName(), value);
-            return MyChapterResult.failure(value);
+            return CompletableFuture.completedFuture(MyChapterResultAsync.failure(value));
         }
 
         return super.rollback(value);

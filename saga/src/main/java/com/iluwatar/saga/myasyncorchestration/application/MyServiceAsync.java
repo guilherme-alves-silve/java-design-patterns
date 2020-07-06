@@ -21,10 +21,12 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.application;
+package com.iluwatar.saga.myasyncorchestration.application;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author guilherme
@@ -32,9 +34,9 @@ import org.slf4j.LoggerFactory;
  * : $
  * @since 30/06/2020 20:14
  */
-public abstract class MyService<K> implements MyOrchestrationChapter<K> {
+public abstract class MyServiceAsync<K> implements MyOrchestrationChapterAsync<K> {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(MyServiceAsync.class);
 
 	@Override
 	public String getName () {
@@ -42,18 +44,18 @@ public abstract class MyService<K> implements MyOrchestrationChapter<K> {
 	}
 
 	@Override
-	public MyChapterResult<K> process (final K value) {
+	public CompletableFuture<MyChapterResultAsync<K>> process (final K value) {
 
 		LOGGER.info("The process of chapter '{}' started. Processed value {} successfully", getName(), value);
 
-		return MyChapterResult.success(value);
+		return CompletableFuture.completedFuture(MyChapterResultAsync.success(value));
 	}
 
 	@Override
-	public MyChapterResult<K> rollback (final K value) {
+	public CompletableFuture<MyChapterResultAsync<K>> rollback (final K value) {
 
 		LOGGER.warn("The rollback of chapter '{}' started. Rollbacked value {} successfully", getName(), value);
 
-		return MyChapterResult.success(value);
+		return CompletableFuture.completedFuture(MyChapterResultAsync.success(value));
 	}
 }

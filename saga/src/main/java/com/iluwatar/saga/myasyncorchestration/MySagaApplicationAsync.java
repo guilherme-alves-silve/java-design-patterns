@@ -29,7 +29,7 @@ package com.iluwatar.saga.myasyncorchestration;
  * : $
  * @since 30/06/2020 20:25
  */
-public class MySagaApplication {
+public class MySagaApplicationAsync {
 
 	public static void main (String[] args) {
 		

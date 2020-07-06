@@ -23,13 +23,13 @@
 
 package com.iluwatar.saga.myasyncorchestration;
 
-import com.iluwatar.saga.myorchestration.application.MySaga;
-import com.iluwatar.saga.myorchestration.application.MySagaOrchestrator;
-import com.iluwatar.saga.myorchestration.application.MyServiceDiscovery;
-import com.iluwatar.saga.myorchestration.service.MyFlyBookingService;
-import com.iluwatar.saga.myorchestration.service.MyHotelBookingService;
-import com.iluwatar.saga.myorchestration.service.MyOrderService;
-import com.iluwatar.saga.myorchestration.service.MyWithdrawMoneyService;
+import com.iluwatar.saga.myasyncorchestration.application.MySagaAsync;
+import com.iluwatar.saga.myasyncorchestration.application.MySagaOrchestratorAsync;
+import com.iluwatar.saga.myasyncorchestration.application.MyServiceDiscoveryAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyFlyBookingServiceAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyHotelBookingServiceAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyOrderServiceAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyWithdrawMoneyServiceAsync;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -40,22 +40,22 @@ import static org.junit.Assert.assertEquals;
  * : $
  * @since 03/07/2020 16:00
  */
-public class MySagaOrchestratorAsyncTest {
+public class MySagaOrchestratorAsyncAsyncTest {
 
 	@Test
 	public void shouldRollbackSuccessfully() {
 
 		final var sagaOrchestrator = new MySagaOrchestratorAsync<>(newSaga(), serviceDiscovery());
-		final var rollbakOrder = sagaOrchestrator.execute("flux_must_rollback_order");
-		assertEquals(MySaga.Result.ROLLBACK, rollbakOrder);
+		final var rollbakOrder = sagaOrchestrator.execute("flux_must_rollback_order").join();
+		assertEquals(MySagaAsync.Result.ROLLBACK, rollbakOrder);
 	}
 
 	@Test
 	public void shouldTryToRollbackEvenIfOneServiceCrashed() {
 
 		final var sagaOrchestrator = new MySagaOrchestratorAsync<>(newSaga(), serviceDiscovery());
-		final var crashedOrder = sagaOrchestrator.execute("flux_must_crash_order");
-		assertEquals(MySaga.Result.CRASHED, crashedOrder);
+		final var crashedOrder = sagaOrchestrator.execute("flux_must_crash_order").join();
+		assertEquals(MySagaAsync.Result.CRASHED, crashedOrder);
 	}
 
 	private MyServiceDiscoveryAsync<String> serviceDiscovery() {

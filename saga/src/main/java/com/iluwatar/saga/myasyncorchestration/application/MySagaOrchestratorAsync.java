@@ -23,16 +23,23 @@
 
 package com.iluwatar.saga.myasyncorchestration.application;
 
-import com.iluwatar.saga.myasyncorchestration.exception.InvalidConfigurationSagaOrchestratorException;
+import com.iluwatar.saga.myasyncorchestration.exception.InvalidConfigurationSagaOrchestratorAsyncException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.iluwatar.saga.myorchestration.application.MySaga.Result;
+import static com.iluwatar.saga.myasyncorchestration.application.MySagaAsync.Result;
 
 /**
  * @author guilherme
@@ -40,75 +47,120 @@ import static com.iluwatar.saga.myorchestration.application.MySaga.Result;
  * : $
  * @since 30/06/2020 20:33
  */
-public class MySagaOrchestrator<K> {
+public class MySagaOrchestratorAsync<K> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MySagaOrchestrator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MySagaOrchestratorAsync.class);
 
 	private final List<MyOrchestrationChapterAsync<K>> servicesChapters;
 
 	private final MySagaAsync saga;
 
-	public MySagaOrchestrator (final MySagaAsync saga, final MyServiceDiscovery<K> serviceDiscovery) {
+	private final ExecutorService executor;
+
+	public MySagaOrchestratorAsync(final MySagaAsync saga, final MyServiceDiscoveryAsync<K> serviceDiscovery) {
 		Objects.requireNonNull(serviceDiscovery, "serviceDiscovery cannot be null!");
 		this.saga = Objects.requireNonNull(saga, "saga cannot be null!");
 		this.servicesChapters = getOrchestrationChapters(saga, serviceDiscovery);
+		final var threadFactory = new ThreadFactory() {
+
+			private final AtomicInteger counter = new AtomicInteger();
+
+			@Override
+			public Thread newThread(Runnable runnable) {
+				return new Thread(runnable, "saga-orchestrator-async-" + counter.incrementAndGet());
+			}
+		};
+		this.executor = Executors.newSingleThreadExecutor(threadFactory);
 	}
 
-	public Result execute (final K value) {
+	public CompletableFuture<Result> execute (final K value) {
 
 		LOGGER.info("The saga is about to start!");
 
 		final var state = new CurrentState();
 
-		var result = Result.FINISHED;
-		K tempVal = value;
+		return sagaAsync(value, state, Result.FINISHED)
+				.thenApply(processed -> processed.sagaResult);
+	}
 
-		while (true) {
-			
-			final var service = servicesChapters.get(state.current());
+	private CompletableFuture<SagaResult<K>> asyncProcess(final MyChapterResultAsync<K> asyncValue, final CurrentState state, final Result sagaLastResult) {
 
-			if (state.isForward()) {
-				final var serviceResult = service.process(tempVal);
-				if (serviceResult.isSuccess()) {
-					tempVal = serviceResult.getValue();
-					state.forward();
-				} else {
-					state.mustRollback();
-					result = Result.ROLLBACK;
-				}
+		final Result sagaUpdatedResult;
+		if (!asyncValue.isSuccess()) {
+			state.mustRollback();
+
+			if (Result.ROLLBACK == sagaLastResult) {
+				sagaUpdatedResult = Result.CRASHED;
 			} else {
-				final var serviceResult = service.rollback(tempVal);
-				if (serviceResult.isSuccess()) {
-					tempVal = serviceResult.getValue();
-				} else {
-					result = Result.CRASHED;
-				}
-
-				state.back();
+				state.forward();
+				sagaUpdatedResult = Result.ROLLBACK;
 			}
-
-			if (!saga.isIndexInRange(state.current())) {
-				return result;
-			}
-
+		} else {
+			sagaUpdatedResult = sagaLastResult;
 		}
+
+		if (state.isForward()) {
+			state.forward();
+		} else {
+			state.back();
+		}
+
+		return sagaAsync(asyncValue.getValue(), state, sagaUpdatedResult);
+	}
+
+	private CompletableFuture<SagaResult<K>> sagaAsync(K value, CurrentState state, final Result sagaLastResult) {
+
+		if (!saga.isIndexInRange(state.current())) {
+			final var chapterResult = MyChapterResultAsync.success(value);
+			return SagaResult.withSagaAndChapterResultAsync(sagaLastResult, chapterResult);
+		}
+
+		return CompletableFuture.supplyAsync(() -> servicesChapters.get(state.current()), executor)
+				.thenCompose(service -> {
+					if (state.isForward()) {
+						return service.process(value)
+								.thenCompose(asyncValue -> asyncProcess(asyncValue, state, sagaLastResult));
+					}
+
+					return service.rollback(value)
+							.thenCompose(asyncValue -> asyncProcess(asyncValue, state, sagaLastResult));
+				});
 	}
 
 	private List<MyOrchestrationChapterAsync<K>> getOrchestrationChapters(
 			final MySagaAsync saga,
-			final MyServiceDiscovery<K> serviceDiscovery
+			final MyServiceDiscoveryAsync<K> serviceDiscovery
 	) {
 		return StreamSupport.stream(saga.spliterator(), false)
-					.map(chapter -> serviceDiscovery.find(chapter.getName()))
-					.map(optService -> optService.orElseThrow(InvalidConfigurationSagaOrchestratorException::new))
-					.collect(Collectors.toList());
+				.map(chapter -> serviceDiscovery.find(chapter.getName()))
+				.map(optService -> optService.orElseThrow(InvalidConfigurationSagaOrchestratorAsyncException::new))
+				.collect(Collectors.toCollection(() -> Collections.synchronizedList(new ArrayList<>())));
+	}
+
+	private static final class SagaResult<K> {
+
+		final Result sagaResult;
+		final MyChapterResultAsync<K> chapterResult;
+
+		private SagaResult(Result sagaResult, MyChapterResultAsync<K> chapterResult) {
+			this.sagaResult = sagaResult;
+			this.chapterResult = chapterResult;
+		}
+
+		public static <K> SagaResult<K> withSagaAndChapterResult(Result sagaResult, MyChapterResultAsync<K> chapterResult) {
+			return new SagaResult<>(sagaResult, chapterResult);
+		}
+
+		public static <K> CompletableFuture<SagaResult<K>> withSagaAndChapterResultAsync(Result sagaResult, MyChapterResultAsync<K> chapterResult) {
+			return CompletableFuture.completedFuture(new SagaResult<>(sagaResult, chapterResult));
+		}
 	}
 
 	private static final class CurrentState {
 
-		private int currentNumber;
+		private volatile int currentNumber;
 
-		private boolean isForward;
+		private volatile boolean isForward;
 
 		CurrentState() {
 			this.currentNumber = 0;

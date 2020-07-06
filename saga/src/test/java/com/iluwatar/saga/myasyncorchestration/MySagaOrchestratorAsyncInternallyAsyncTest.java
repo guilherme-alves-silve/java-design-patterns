@@ -23,12 +23,16 @@
 
 package com.iluwatar.saga.myasyncorchestration;
 
+import com.iluwatar.saga.myasyncorchestration.application.*;
+import com.iluwatar.saga.myasyncorchestration.exception.InvalidConfigurationSagaOrchestratorAsyncException;
 import com.iluwatar.saga.myorchestration.application.*;
 import com.iluwatar.saga.myorchestration.exception.InvalidConfigurationSagaOrchestratorException;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -36,55 +40,55 @@ import static org.junit.Assert.assertEquals;
 /**
  * test to test orchestration logic
  */
-public class MySagaOrchestratorInternallyAsyncTest {
+public class MySagaOrchestratorAsyncInternallyAsyncTest {
 
 	private static final int EXAMPLE_VALUE = 1;
 
-	private final List<String> resultRecords = new ArrayList<>();
+	private final List<String> resultRecords = new CopyOnWriteArrayList<>();
 
 	@Test
 	public void shouldProcessAndInTheEndRollbackBecauseOfFailures () {
 
 		final var sagaOrchestrator = new MySagaOrchestratorAsync<>(buildSaga(), buildServiceDiscovery());
-		final var result = sagaOrchestrator.execute(EXAMPLE_VALUE);
+		final var result = sagaOrchestrator.execute(EXAMPLE_VALUE).join();
 
-		assertEquals("must rollback in the end because of failure", MySaga.Result.ROLLBACK, result);
+		assertEquals("must rollback in the end because of failure", MySagaAsync.Result.ROLLBACK, result);
 		assertArrayEquals("Should process all and rollback all in the correct order, when the last failed",
 				resultRecords.toArray(new String[] {}), new String[] {
-						"Process Service1",
-						"Process Service2",
-						"Process Service3",
-						"Process Service4",
-						"Rollback Service4",
-						"Rollback Service3",
-						"Rollback Service2",
-						"Rollback Service1",
+						"Process Service1Async",
+						"Process Service2Async",
+						"Process Service3Async",
+						"Process Service4Async",
+						"Rollback Service4Async",
+						"Rollback Service3Async",
+						"Rollback Service2Async",
+						"Rollback Service1Async",
 				});
 	}
 
-	@Test(expected = InvalidConfigurationSagaOrchestratorException.class)
+	@Test(expected = InvalidConfigurationSagaOrchestratorAsyncException.class)
 	public void shouldThrowExceptionIfChaptersAreConfigureIncorrectly () {
 		
-		new MySagaOrchestrator<>(buildSagaIncorrectly(), buildServiceDiscovery());
+		new MySagaOrchestratorAsync<>(buildSagaIncorrectly(), buildServiceDiscovery());
 	}
 
 	private MySagaAsync buildSaga () {
 		return MySagaAsync.create()
-				.chapter("Service1")
-				.chapter("Service2")
-				.chapter("Service3")
-				.chapter("Service4 Fail in the end");
+				.chapter("Service1Async")
+				.chapter("Service2Async")
+				.chapter("Service3Async")
+				.chapter("Service4Async Fail in the end");
 	}
 
 	private MySagaAsync buildSagaIncorrectly () {
 		return MySagaAsync.create()
-				.chapter("Service1")
-				.chapter("Service2")
+				.chapter("Service1Async")
+				.chapter("Service2Async")
 				.chapter("ServiceNotExists3")
-				.chapter("Service4 Fail in the end");
+				.chapter("Service4Async Fail in the end");
 	}
 
-	private MyServiceDiscovery<Integer> buildServiceDiscovery () {
+	private MyServiceDiscoveryAsync<Integer> buildServiceDiscovery () {
 		return MyServiceDiscoveryAsync.<Integer>create()
 				.discover(new Service1Async())
 				.discover(new Service2Async())
@@ -92,7 +96,7 @@ public class MySagaOrchestratorInternallyAsyncTest {
 				.discover(new Service4Async());
 	}
 
-	public class Service1Async extends MyService<Integer> {
+	public class Service1Async extends MyServiceAsync<Integer> {
 
 		@Override
 		public String getName () {
@@ -100,49 +104,49 @@ public class MySagaOrchestratorInternallyAsyncTest {
 		}
 
 		@Override
-		public MyChapterResult<Integer> process (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> process (final Integer value) {
 			resultRecords.add("Process " + this.getClass().getSimpleName());
 			return super.process(value);
 		}
 
 		@Override
-		public MyChapterResult<Integer> rollback (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> rollback (final Integer value) {
 			resultRecords.add("Rollback " + this.getClass().getSimpleName());
 			return super.rollback(value);
 		}
 	}
 
-	public class Service2Async extends MyService<Integer> {
+	public class Service2Async extends MyServiceAsync<Integer> {
 
 		@Override
-		public MyChapterResult<Integer> process (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> process (final Integer value) {
 			resultRecords.add("Process " + this.getClass().getSimpleName());
 			return super.process(value);
 		}
 
 		@Override
-		public MyChapterResult<Integer> rollback (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> rollback (final Integer value) {
 			resultRecords.add("Rollback " + this.getClass().getSimpleName());
 			return super.rollback(value);
 		}
 	}
 
-	public class Service3Async extends MyService<Integer> {
+	public class Service3Async extends MyServiceAsync<Integer> {
 
 		@Override
-		public MyChapterResult<Integer> process (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> process (final Integer value) {
 			resultRecords.add("Process " + this.getClass().getSimpleName());
 			return super.process(value);
 		}
 
 		@Override
-		public MyChapterResult<Integer> rollback (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> rollback (final Integer value) {
 			resultRecords.add("Rollback " + this.getClass().getSimpleName());
 			return super.rollback(value);
 		}
 	}
 
-	public class Service4Async extends MyService<Integer> {
+	public class Service4Async extends MyServiceAsync<Integer> {
 
 		@Override
 		public String getName () {
@@ -150,13 +154,14 @@ public class MySagaOrchestratorInternallyAsyncTest {
 		}
 
 		@Override
-		public MyChapterResult<Integer> process (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> process (final Integer value) {
 			resultRecords.add("Process " + this.getClass().getSimpleName());
-			return MyChapterResult.failure(value);
+			LOGGER.info("The process of chapter '{}' started. But failed {}", getName(), value);
+			return CompletableFuture.completedFuture(MyChapterResultAsync.failure(value));
 		}
 
 		@Override
-		public MyChapterResult<Integer> rollback (final Integer value) {
+		public CompletableFuture<MyChapterResultAsync<Integer>> rollback (final Integer value) {
 			resultRecords.add("Rollback " + this.getClass().getSimpleName());
 			return super.rollback(value);
 		}

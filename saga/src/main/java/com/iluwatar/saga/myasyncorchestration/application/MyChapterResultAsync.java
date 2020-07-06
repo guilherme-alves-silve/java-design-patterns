@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.application;
+package com.iluwatar.saga.myasyncorchestration.application;
 
 /**
  * @author guilherme
@@ -29,12 +29,12 @@ package com.iluwatar.saga.myorchestration.application;
  * : $
  * @since 30/06/2020 18:16
  */
-public class MyChapterResult<K> {
+public class MyChapterResultAsync<K> {
 
 	private final K value;
 	private final State state;
 
-	private MyChapterResult (final K value, final State state) {
+	private MyChapterResultAsync(final K value, final State state) {
 		this.value = value;
 		this.state = state;
 	}
@@ -47,12 +47,12 @@ public class MyChapterResult<K> {
 		return State.SUCCESS == state;
 	}
 
-	public static <K> MyChapterResult<K> success(final K value) {
-		return new MyChapterResult<>(value, State.SUCCESS);
+	public static <K> MyChapterResultAsync<K> success(final K value) {
+		return new MyChapterResultAsync<>(value, State.SUCCESS);
 	}
 
-	public static <K> MyChapterResult<K> failure(final K value) {
-		return new MyChapterResult<>(value, State.FAILURE);
+	public static <K> MyChapterResultAsync<K> failure(final K value) {
+		return new MyChapterResultAsync<>(value, State.FAILURE);
 	}
 
 	public enum State {

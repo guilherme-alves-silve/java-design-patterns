@@ -21,7 +21,9 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.application;
+package com.iluwatar.saga.myasyncorchestration.application;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author guilherme
@@ -29,11 +31,11 @@ package com.iluwatar.saga.myorchestration.application;
  * : $
  * @since 30/06/2020 20:15
  */
-public interface MyOrchestrationChapter<K> {
+public interface MyOrchestrationChapterAsync<K> {
 
 	String getName();
 
-	MyChapterResult<K> process(K value);
+	CompletableFuture<MyChapterResultAsync<K>> process(K value);
 
-	MyChapterResult<K> rollback(K value);
+	CompletableFuture<MyChapterResultAsync<K>> rollback(K value);
 }

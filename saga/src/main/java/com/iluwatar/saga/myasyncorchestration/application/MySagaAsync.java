@@ -21,12 +21,13 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.application;
+package com.iluwatar.saga.myasyncorchestration.application;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author guilherme
@@ -34,33 +35,25 @@ import java.util.Objects;
  * : $
  * @since 30/06/2020 20:34
  */
-public class MySaga implements Iterable<MySaga.MyChapter> {
+public class MySagaAsync implements Iterable<MySagaAsync.MyChapter> {
 
 	private final List<MyChapter> chapters;
 
-	private MySaga () {
-		this.chapters = new ArrayList<>();
+	private MySagaAsync() {
+		this.chapters = new CopyOnWriteArrayList<>();
 	}
 
-	public static MySaga create () {
-		return new MySaga();
+	public static MySagaAsync create () {
+		return new MySagaAsync();
 	}
 
-	public MySaga chapter (final String chapterName) {
+	public MySagaAsync chapter (final String chapterName) {
 		chapters.add(new MyChapter(chapterName));
 		return this;
 	}
 
-	public MyChapter getChapter (final int index) {
-		return chapters.get(index);
-	}
-
 	public boolean isIndexInRange (final int index) {
 		return index >= 0 && (index < chapters.size());
-	}
-
-	public int totalChapters () {
-		return chapters.size();
 	}
 
 	@Override
@@ -72,7 +65,7 @@ public class MySaga implements Iterable<MySaga.MyChapter> {
 		FINISHED, ROLLBACK, CRASHED
 	}
 
-	public class MyChapter {
+	public static class MyChapter {
 
 		private final String name;
 

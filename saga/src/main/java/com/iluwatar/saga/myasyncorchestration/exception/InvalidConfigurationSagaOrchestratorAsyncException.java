@@ -29,6 +29,6 @@ package com.iluwatar.saga.myasyncorchestration.exception;
  * : $
  * @since 02/07/2020 18:11
  */
-public class InvalidConfigurationSagaOrchestratorException extends RuntimeException {
+public class InvalidConfigurationSagaOrchestratorAsyncException extends RuntimeException {
 
 }

@@ -21,17 +21,17 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration;
+package com.iluwatar.saga.myasyncorchestration;
 
 import org.junit.Test;
 
 /**
  * empty test
  */
-public class MySagaApplicationTest {
+public class MySagaApplicationAsyncTest {
 
   @Test
   public void mainTest() {
-    MySagaApplication.main(new String[]{});
+    MySagaApplicationAsync.main(new String[]{});
   }
 }

@@ -34,11 +34,11 @@ import java.util.Optional;
  * : $
  * @since 30/06/2020 20:44
  */
-public class MyServiceDiscovery<K> {
+public class MyServiceDiscoveryAsync<K> {
 
 	private final Map<String, MyOrchestrationChapterAsync<K>> orchestrationsMap;
 
-	private MyServiceDiscovery () {
+	private MyServiceDiscoveryAsync() {
 		this.orchestrationsMap = new HashMap<>();
 	}
 
@@ -47,13 +47,13 @@ public class MyServiceDiscovery<K> {
 		return Optional.ofNullable(orchestrationsMap.get(chapterName));
 	}
 
-	public MyServiceDiscovery<K> discover(final MyOrchestrationChapterAsync<K> orchestrationChapter) {
+	public MyServiceDiscoveryAsync<K> discover(final MyOrchestrationChapterAsync<K> orchestrationChapter) {
 		Objects.requireNonNull(orchestrationChapter, "orchestrationChapter cannot be null");
 		orchestrationsMap.put(orchestrationChapter.getName(), orchestrationChapter);
 		return this;
 	}
 
-	public static <K> MyServiceDiscovery<K> create() {
-		return new MyServiceDiscovery<>();
+	public static <K> MyServiceDiscoveryAsync<K> create() {
+		return new MyServiceDiscoveryAsync<>();
 	}
 }

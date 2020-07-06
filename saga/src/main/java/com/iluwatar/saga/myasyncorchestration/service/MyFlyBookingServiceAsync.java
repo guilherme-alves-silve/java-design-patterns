@@ -21,9 +21,9 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.saga.myorchestration.service;
+package com.iluwatar.saga.myasyncorchestration.service;
 
-import com.iluwatar.saga.myorchestration.application.MyService;
+import com.iluwatar.saga.myasyncorchestration.application.MyServiceAsync;
 
 /**
  * @author guilherme
@@ -31,7 +31,7 @@ import com.iluwatar.saga.myorchestration.application.MyService;
  * : $
  * @since 03/07/2020 15:56
  */
-public class MyFlyBookingService extends MyService<String> {
+public class MyFlyBookingServiceAsync extends MyServiceAsync<String> {
 
     @Override
     public String getName() {

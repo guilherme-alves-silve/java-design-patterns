@@ -35,7 +35,7 @@ import org.junit.Test;
 /**
  * test to test orchestration logic
  */
-public class MySagaOrchestratorInternallyTest {
+public class MySagaOrchestratorAsyncInternallyTest {
 
 	private static final int EXAMPLE_VALUE = 1;
 
