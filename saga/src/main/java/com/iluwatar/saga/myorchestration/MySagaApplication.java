@@ -23,6 +23,14 @@
 
 package com.iluwatar.saga.myorchestration;
 
+import com.iluwatar.saga.myorchestration.application.MySaga;
+import com.iluwatar.saga.myorchestration.application.MySagaOrchestrator;
+import com.iluwatar.saga.myorchestration.application.MyServiceDiscovery;
+import com.iluwatar.saga.myorchestration.service.MyFlyBookingService;
+import com.iluwatar.saga.myorchestration.service.MyHotelBookingService;
+import com.iluwatar.saga.myorchestration.service.MyOrderService;
+import com.iluwatar.saga.myorchestration.service.MyWithdrawMoneyService;
+
 /**
  * @author guilherme
  * @version : $<br/>
@@ -32,6 +40,25 @@ package com.iluwatar.saga.myorchestration;
 public class MySagaApplication {
 
 	public static void main (String[] args) {
-		
+
+		final var sagaOrchestrator = new MySagaOrchestrator<>(newSaga(), serviceDiscovery());
+		final var rollbakOrder = sagaOrchestrator.execute("flux_must_rollback_order");
+		System.out.println("rollbakOrder: " + rollbakOrder);
+	}
+
+	private static MyServiceDiscovery<String> serviceDiscovery() {
+		return MyServiceDiscovery.<String>create()
+				.discover(new MyOrderService())
+				.discover(new MyFlyBookingService())
+				.discover(new MyHotelBookingService())
+				.discover(new MyWithdrawMoneyService());
+	}
+
+	private static MySaga newSaga() {
+		return MySaga.create()
+				.chapter("init an order")
+				.chapter("booking a Fly")
+				.chapter("booking a Hotel")
+				.chapter("withdrawing Money");
 	}
 }

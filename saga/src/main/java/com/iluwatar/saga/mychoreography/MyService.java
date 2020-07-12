@@ -4,20 +4,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public abstract class MyService implements MyChoreographyChapter {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
 
-    private final MyDiscoveryService discoveryService;
+    private final MyServiceDiscovery discoveryService;
 
-    public MyService(final MyDiscoveryService discoveryService) {
+    public MyService(final MyServiceDiscovery discoveryService) {
         this.discoveryService = Objects.requireNonNull(discoveryService, "discoveryService cannot be null!");
     }
 
     @Override
     public MySaga execute(MySaga saga) {
-        return null;
+
+        final var chapter = saga.getCurrent();
+        final var chapterName = chapter.getName();
+        var nextSaga = saga;
+        Object value = null;
+        if (chapterName.equals(getName())) {
+
+            if (saga.isForward()) {
+
+                nextSaga = process(saga);
+                value = nextSaga.getCurrentValue();
+                if (nextSaga.isCurrentSuccess()) {
+                    nextSaga.forward();
+                } else {
+                    nextSaga.mustRollback();
+                }
+            } else {
+
+                nextSaga = rollback(nextSaga);
+                value = nextSaga.getCurrentValue();
+                nextSaga.back();
+            }
+
+            if (isSagaFinished(nextSaga)) {
+                return nextSaga;
+            }
+
+            nextSaga.setCurrentValue(value);
+        }
+
+        final var finalNextSaga = nextSaga;
+        return discoveryService.find(nextSaga.getCurrent().getName())
+                .map(nextChapter -> nextChapter.execute(finalNextSaga))
+                .orElseThrow(serviceNotFoundException(chapterName));
+    }
+
+    private Supplier<RuntimeException> serviceNotFoundException(String chapterName) {
+        return () -> new RuntimeException(
+                String.format("the service %s has not been found", chapterName));
     }
 
     @Override

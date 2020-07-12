@@ -31,7 +31,7 @@ import org.junit.Test;
 public class MySagaApplicationAsyncTest {
 
   @Test
-  public void mainTest() {
+  public void mainTest() throws InterruptedException {
     MySagaApplicationAsync.main(new String[]{});
   }
 }

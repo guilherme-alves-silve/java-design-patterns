@@ -31,10 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -81,6 +78,11 @@ public class MySagaOrchestratorAsync<K> {
 
 		return sagaAsync(value, state, Result.FINISHED)
 				.thenApply(processed -> processed.sagaResult);
+	}
+
+	public void shutdown(final long timeout, final TimeUnit timeUnit) throws InterruptedException {
+		executor.shutdown();
+		executor.awaitTermination(timeout, timeUnit);
 	}
 
 	private CompletableFuture<SagaResult<K>> asyncProcess(final MyChapterResultAsync<K> asyncValue, final CurrentState state, final Result sagaLastResult) {

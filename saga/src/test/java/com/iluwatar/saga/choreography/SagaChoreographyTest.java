@@ -30,7 +30,6 @@ import org.junit.Test;
  */
 public class SagaChoreographyTest {
 
-
   @Test
   public void executeTest() {
     var sd = serviceDiscovery();

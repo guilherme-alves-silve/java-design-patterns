@@ -122,8 +122,11 @@ public class Saga {
     return ++pos;
   }
 
-  int back() {
+  void mustRollback() {
     this.forward = false;
+  }
+
+  int back() {
     return --pos;
   }
 

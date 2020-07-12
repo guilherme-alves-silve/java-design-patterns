@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MyDiscoveryService {
+public class MyServiceDiscovery {
 
     private final Map<String, MyChoreographyChapter> services;
 
-    public MyDiscoveryService() {
+    private MyServiceDiscovery() {
         this.services = new HashMap<>();
     }
 
@@ -21,9 +21,13 @@ public class MyDiscoveryService {
         return Optional.ofNullable(services.get(name));
     }
 
-    public MyDiscoveryService discover(final MyChoreographyChapter choreographyChapter) {
+    public MyServiceDiscovery discover(final MyChoreographyChapter choreographyChapter) {
         Objects.requireNonNull(choreographyChapter, "choreographyChapter cannot be null!");
         services.put(choreographyChapter.getName(), choreographyChapter);
         return this;
+    }
+
+    public static MyServiceDiscovery create() {
+        return new MyServiceDiscovery();
     }
 }

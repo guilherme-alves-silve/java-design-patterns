@@ -65,12 +65,20 @@ public class MySaga {
         return finished;
     }
 
+    boolean isForward() {
+        return forward;
+    }
+
     int forward() {
         return ++pos;
     }
 
-    int back() {
+    MySaga mustRollback() {
         this.forward = false;
+        return this;
+    }
+
+    int back() {
         return --pos;
     }
 

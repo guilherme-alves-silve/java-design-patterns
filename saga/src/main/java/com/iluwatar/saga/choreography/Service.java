@@ -53,7 +53,7 @@ public abstract class Service implements ChoreographyChapter {
         if (nextSaga.isCurrentSuccess()) {
           nextSaga.forward();
         } else {
-          nextSaga.back();
+          nextSaga.mustRollback();
         }
       } else {
         nextSaga = rollback(saga);

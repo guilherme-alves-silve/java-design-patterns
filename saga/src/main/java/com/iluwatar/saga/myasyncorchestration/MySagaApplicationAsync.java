@@ -23,6 +23,16 @@
 
 package com.iluwatar.saga.myasyncorchestration;
 
+import com.iluwatar.saga.myasyncorchestration.application.MySagaAsync;
+import com.iluwatar.saga.myasyncorchestration.application.MySagaOrchestratorAsync;
+import com.iluwatar.saga.myasyncorchestration.application.MyServiceDiscoveryAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyFlyBookingServiceAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyHotelBookingServiceAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyOrderServiceAsync;
+import com.iluwatar.saga.myasyncorchestration.service.MyWithdrawMoneyServiceAsync;
+
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author guilherme
  * @version : $<br/>
@@ -31,7 +41,26 @@ package com.iluwatar.saga.myasyncorchestration;
  */
 public class MySagaApplicationAsync {
 
-	public static void main (String[] args) {
-		
+	public static void main (String[] args) throws InterruptedException {
+		final var sagaOrchestrator = new MySagaOrchestratorAsync<>(newSaga(), serviceDiscovery());
+		final var rollbakOrder = sagaOrchestrator.execute("flux_must_rollback_order").join();
+		System.out.println("rollbakOrder: " + rollbakOrder);
+		sagaOrchestrator.shutdown(1L, TimeUnit.SECONDS);
+	}
+
+	private static MyServiceDiscoveryAsync<String> serviceDiscovery() {
+		return MyServiceDiscoveryAsync.<String>create()
+				.discover(new MyOrderServiceAsync())
+				.discover(new MyFlyBookingServiceAsync())
+				.discover(new MyHotelBookingServiceAsync())
+				.discover(new MyWithdrawMoneyServiceAsync());
+	}
+
+	private static MySagaAsync newSaga() {
+		return MySagaAsync.create()
+				.chapter("init an order")
+				.chapter("booking a Fly")
+				.chapter("booking a Hotel")
+				.chapter("withdrawing Money");
 	}
 }
