@@ -65,7 +65,7 @@ This project is licensed under the terms of the MIT license.
 | Pattern                | Done |
 |------------------------|------|
 |Saga 					 |  [X] |
-|CQRS 					 |  [ ] |
+|CQRS 					 |  [X] |
 |API Gateway 			 |  [ ] |
 |Aggregator Microservices|  [ ] |
 |Commander 				 |  [ ] |
