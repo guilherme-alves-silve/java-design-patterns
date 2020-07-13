@@ -21,27 +21,41 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.asynccqrs.dto;
+package com.iluwatar.cqrsasync.model;
 
-import java.util.Objects;
 import java.util.StringJoiner;
 
-public class AuthorDTO {
+public class Author {
 
-    private final String name;
-    private final String email;
-    private final String username;
+    private Integer id;
+    private String username;
+    private String name;
+    private String email;
 
-    /**
-     * Constructor.
-     *
-     * @param name     name of the author
-     * @param email    email of the author
-     * @param username username of the author
-     */
-    public AuthorDTO(final String name, final String email, final String username) {
+    public Author(Integer id, String username, String name, String email) {
+        this.id = id;
+        this.username = username;
         this.name = name;
         this.email = email;
+    }
+
+    public Author(String username, String name, String email) {
+        this(null, username, name, email);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -49,35 +63,25 @@ public class AuthorDTO {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AuthorDTO)) return false;
-        AuthorDTO author = (AuthorDTO) o;
-        return Objects.equals(name, author.name) &&
-                Objects.equals(email, author.email) &&
-                Objects.equals(username, author.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, email, username);
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AuthorDTO.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Author.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("username='" + username + "'")
                 .add("name='" + name + "'")
                 .add("email='" + email + "'")
-                .add("username='" + username + "'")
                 .toString();
     }
 }

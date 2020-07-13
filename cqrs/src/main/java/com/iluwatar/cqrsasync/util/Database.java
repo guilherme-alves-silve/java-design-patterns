@@ -1,4 +1,4 @@
-package com.iluwatar.asynccqrs.util;
+package com.iluwatar.cqrsasync.util;
 
 import dev.miku.r2dbc.mysql.MySqlConnection;
 import dev.miku.r2dbc.mysql.MySqlConnectionConfiguration;

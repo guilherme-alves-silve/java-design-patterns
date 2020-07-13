@@ -23,15 +23,19 @@
 
 package com.iluwatar.cqrsasync;
 
-import com.iluwatar.mycqrs.command.CommandServiceImpl;
-import com.iluwatar.mycqrs.dto.AuthorDTO;
-import com.iluwatar.mycqrs.dto.BookDTO;
-import com.iluwatar.mycqrs.query.QueryService;
-import com.iluwatar.mycqrs.query.QueryServiceImpl;
+import com.iluwatar.cqrsasync.command.CommandServiceImpl;
+import com.iluwatar.cqrsasync.dto.AuthorDTO;
+import com.iluwatar.cqrsasync.dto.BookDTO;
+import com.iluwatar.cqrsasync.query.QueryService;
+import com.iluwatar.cqrsasync.query.QueryServiceImpl;
+import com.iluwatar.cqrsasync.util.DatabaseInit;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,30 +49,38 @@ public class CQRSAsyncTest {
 
     @BeforeAll
     public static void initializeAndPopulateDatabase() {
+
+        DatabaseInit.init();
+
         var commandService = new CommandServiceImpl();
         queryService = new QueryServiceImpl();
 
         // create first author1
-        commandService.authorCreated("username1", "name1", "email1");
+        commandService.authorCreated("username1", "name1", "email1").join();
 
         // create author1 and update all its data
-        commandService.authorCreated("username2", "name2", "email2");
-        commandService.authorEmailUpdated("username2", "new_email2");
-        commandService.authorNameUpdated("username2", "new_name2");
-        commandService.authorUsernameUpdated("username2", "new_username2");
+        commandService.authorCreated("username2", "name2", "email2").join();
+        commandService.authorEmailUpdated("username2", "new_email2").join();
+        commandService.authorNameUpdated("username2", "new_name2").join();
+        commandService.authorUsernameUpdated("username2", "new_username2").join();
 
         // add book1 to author1
-        commandService.bookAddedToAuthor("title1", 10, "username1");
+        commandService.bookAddedToAuthor("title1", BigDecimal.valueOf(10), "username1").join();
 
         // add book2 to author1 and update all its data
-        commandService.bookAddedToAuthor("title2", 20, "username1");
-        commandService.bookPriceUpdated("title2", 30);
-        commandService.bookTitleUpdated("title2", "new_title2");
+        commandService.bookAddedToAuthor("title2", BigDecimal.valueOf(20), "username1").join();
+        commandService.bookPriceUpdated("title2", BigDecimal.valueOf(30)).join();
+        commandService.bookTitleUpdated("title2", "new_title2").join();
+    }
+
+    @AfterAll
+    public static void destroy() {
+        DatabaseInit.destroy();
     }
 
     @Test
     public void shouldGetAuthorByUsername() {
-        var optAuthor = queryService.getAuthorByUsername("username1");
+        var optAuthor = queryService.getAuthorByUsername("username1").join();
         assertTrue(optAuthor.isPresent());
 
         var author = optAuthor.get();
@@ -79,7 +91,7 @@ public class CQRSAsyncTest {
 
     @Test
     public void shouldGetUpdatedAuthorByUsername() {
-        var optAuthor = queryService.getAuthorByUsername("new_username2");
+        var optAuthor = queryService.getAuthorByUsername("new_username2").join();
         assertTrue(optAuthor.isPresent());
 
         var author = optAuthor.get();
@@ -90,31 +102,31 @@ public class CQRSAsyncTest {
 
     @Test
     public void shouldGetBook() {
-        var optBook = queryService.getBook("title1");
+        var optBook = queryService.getBook("title1").join();
         assertTrue(optBook.isPresent());
 
         var book = optBook.get();
         assertEquals("title1", book.getTitle());
-        assertEquals(10, book.getPrice(), 0.01);
+        assertEquals(BigDecimal.valueOf(10).setScale(2, RoundingMode.HALF_DOWN), book.getPrice());
     }
 
     @Test
     public void shouldGetAuthorBooks() {
-        var books = queryService.getAuthorBooks("username1");
+        var books = queryService.getAuthorBooks("username1").join();
         assertEquals(2, books.size());
-        assertTrue(books.contains(new BookDTO("title1", 10)));
-        assertTrue(books.contains(new BookDTO("new_title2", 30)));
+        assertTrue(books.contains(new BookDTO("title1", BigDecimal.valueOf(10))));
+        assertTrue(books.contains(new BookDTO("new_title2", BigDecimal.valueOf(30))));
     }
 
     @Test
     public void shouldGetAuthorBooksCount() {
-        var bookCount = queryService.getAuthorBooksCount("username1");
+        var bookCount = queryService.getAuthorBooksCount("username1").join();
         assertEquals(new BigInteger("2"), bookCount);
     }
 
     @Test
     public void shouldGetAuthorsCount() {
-        var authorCount = queryService.getAuthorsCount();
+        var authorCount = queryService.getAuthorsCount().join();
         assertEquals(new BigInteger("2"), authorCount);
     }
 }

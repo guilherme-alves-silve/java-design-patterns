@@ -1,4 +1,4 @@
-package com.iluwatar.asynccqrs.util;
+package com.iluwatar.cqrsasync.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

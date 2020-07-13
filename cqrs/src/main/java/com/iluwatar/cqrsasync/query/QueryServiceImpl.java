@@ -1,9 +1,9 @@
-package com.iluwatar.asynccqrs.query;
+package com.iluwatar.cqrsasync.query;
 
-import com.iluwatar.asynccqrs.dto.AuthorDTO;
-import com.iluwatar.asynccqrs.dto.BookDTO;
-import com.iluwatar.asynccqrs.model.Author;
-import com.iluwatar.asynccqrs.model.Book;
+import com.iluwatar.cqrsasync.dto.AuthorDTO;
+import com.iluwatar.cqrsasync.dto.BookDTO;
+import com.iluwatar.cqrsasync.model.Author;
+import com.iluwatar.cqrsasync.model.Book;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -14,9 +14,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static com.iluwatar.asynccqrs.util.DatabaseUtils.executeFetch;
-import static com.iluwatar.asynccqrs.util.DatabaseUtils.executeFetchAll;
-import static com.iluwatar.asynccqrs.util.DatabaseUtils.executeFetchMono;
+import static com.iluwatar.cqrsasync.util.DatabaseUtils.executeFetch;
+import static com.iluwatar.cqrsasync.util.DatabaseUtils.executeFetchAll;
+import static com.iluwatar.cqrsasync.util.DatabaseUtils.executeFetchMono;
 
 public class QueryServiceImpl implements QueryService {
 

@@ -1,7 +1,7 @@
-package com.iluwatar.asynccqrs.query;
+package com.iluwatar.cqrsasync.query;
 
-import com.iluwatar.asynccqrs.dto.AuthorDTO;
-import com.iluwatar.asynccqrs.dto.BookDTO;
+import com.iluwatar.cqrsasync.dto.AuthorDTO;
+import com.iluwatar.cqrsasync.dto.BookDTO;
 
 import java.math.BigInteger;
 import java.util.List;

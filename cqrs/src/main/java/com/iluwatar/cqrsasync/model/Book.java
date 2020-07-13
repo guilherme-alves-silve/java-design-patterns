@@ -21,67 +21,71 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.asynccqrs.model;
+package com.iluwatar.cqrsasync.model;
 
+import java.math.BigDecimal;
 import java.util.StringJoiner;
 
-public class Author {
+public class Book {
 
-    private Integer id;
-    private String username;
-    private String name;
-    private String email;
+    private Long id;
+    private String title;
+    private BigDecimal price;
+    private Author author;
 
-    public Author(Integer id, String username, String name, String email) {
+    public Book(Long id, String title, BigDecimal price, Author author) {
         this.id = id;
-        this.username = username;
-        this.name = name;
-        this.email = email;
+        this.title = title;
+        this.price = price;
+        this.author = author;
     }
 
-    public Author(String username, String name, String email) {
-        this(null, username, name, email);
+    public Book(String title, BigDecimal price, Author author) {
+        this(null, title, price, author);
     }
 
-    public Integer getId() {
+    protected Book() {
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getTitle() {
+        return title;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getName() {
-        return name;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public String getEmail() {
-        return email;
+    public Author getAuthor() {
+        return author;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Author.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Book.class.getSimpleName() + "[", "]")
                 .add("id=" + id)
-                .add("username='" + username + "'")
-                .add("name='" + name + "'")
-                .add("email='" + email + "'")
+                .add("title='" + title + "'")
+                .add("price=" + price)
+                .add("author=" + author)
                 .toString();
     }
 }

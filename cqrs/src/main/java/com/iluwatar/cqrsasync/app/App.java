@@ -21,11 +21,11 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.asynccqrs.app;
+package com.iluwatar.cqrsasync.app;
 
-import com.iluwatar.asynccqrs.command.CommandServiceImpl;
-import com.iluwatar.asynccqrs.query.QueryServiceImpl;
-import com.iluwatar.asynccqrs.util.DatabaseInit;
+import com.iluwatar.cqrsasync.command.CommandServiceImpl;
+import com.iluwatar.cqrsasync.query.QueryServiceImpl;
+import com.iluwatar.cqrsasync.util.DatabaseInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

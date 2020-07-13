@@ -1,4 +1,4 @@
-package com.iluwatar.asynccqrs.command;
+package com.iluwatar.cqrsasync.command;
 
 import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;

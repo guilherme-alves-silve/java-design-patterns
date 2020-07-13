@@ -21,9 +21,10 @@
  * THE SOFTWARE.
  */
 
-package com.iluwatar.asynccqrs.dto;
+package com.iluwatar.cqrsasync.dto;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -42,7 +43,7 @@ public class BookDTO {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.setScale(2, RoundingMode.HALF_DOWN);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class BookDTO {
         if (this == o) return true;
         if (!(o instanceof BookDTO)) return false;
         BookDTO book = (BookDTO) o;
-        return Objects.equals(book.price, price) &&
+        return Objects.equals(book.price.setScale(2, RoundingMode.HALF_DOWN), price.setScale(2, RoundingMode.HALF_DOWN)) &&
                 Objects.equals(title, book.title);
     }
 

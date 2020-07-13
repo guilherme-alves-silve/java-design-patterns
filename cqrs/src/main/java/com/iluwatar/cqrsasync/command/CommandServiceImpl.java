@@ -1,7 +1,7 @@
-package com.iluwatar.asynccqrs.command;
+package com.iluwatar.cqrsasync.command;
 
-import com.iluwatar.asynccqrs.model.Author;
-import com.iluwatar.asynccqrs.model.Book;
+import com.iluwatar.cqrsasync.model.Author;
+import com.iluwatar.cqrsasync.model.Book;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static com.iluwatar.asynccqrs.util.DatabaseUtils.executeFetchMono;
-import static com.iluwatar.asynccqrs.util.DatabaseUtils.executeStatement;
+import static com.iluwatar.cqrsasync.util.DatabaseUtils.executeFetchMono;
+import static com.iluwatar.cqrsasync.util.DatabaseUtils.executeStatement;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class CommandServiceImpl implements CommandService {
