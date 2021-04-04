@@ -73,3 +73,10 @@ This project is licensed under the terms of the MIT license.
 |Poison Pill 			 |  [ ] |
 |Serverless 			 |  [ ] |
 |Sharding 				 |  [ ] |
+
+## * Concurrency *
+
+| Pattern                | Done |
+|------------------------|------|
+|Thread Pool    		 |  [X] |
+|Read Writer Lock        |  [ ] |
