@@ -57,10 +57,15 @@ public class ReaderWriterLock implements ReadWriteLock {
    *
    * <p>This is the most important field in this class to control the access for reader/writer.
    */
-  private final Set<Object> globalMutex = new HashSet<>();
+  private final Set<Lock> globalMutex = new HashSet<>();
 
-  private ReadLock readerLock = new ReadLock();
-  private WriteLock writerLock = new WriteLock();
+  private final ReadLock readerLock;
+  private final WriteLock writerLock;
+
+  public ReaderWriterLock() {
+    this.readerLock = new ReadLock();
+    this.writerLock = new WriteLock();
+  }
 
   @Override
   public Lock readLock() {

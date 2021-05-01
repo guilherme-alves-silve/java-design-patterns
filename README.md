@@ -79,4 +79,7 @@ This project is licensed under the terms of the MIT license.
 | Pattern                | Done |
 |------------------------|------|
 |Thread Pool    		 |  [X] |
+|Mutex                   |  [ ] |
+|Semaphore               |  [ ] |
 |Read Writer Lock        |  [ ] |
+|Promise                 |  [ ] |
